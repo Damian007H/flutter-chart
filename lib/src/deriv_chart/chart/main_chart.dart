@@ -381,14 +381,36 @@ class _ChartImplementationState extends BasicChartState<MainChart> {
                       _isScrollToLastTickAvailable)
                     Positioned(
                       bottom: 0,
-                      right: quoteLabelsTouchAreaWidth,
+                      right: context
+                                  .read<ChartConfig>()
+                                  .chartAxisConfig
+                                  .yAxisLabelPosition ==
+                              YAxisLabelPosition.right
+                          ? (context
+                                      .read<ChartConfig>()
+                                      .chartAxisConfig
+                                      .yAxisLabelsOverlay
+                                  ? 0
+                                  : quoteLabelsTouchAreaWidth)
+                          : 0,
                       child: _buildScrollToLastTickButton(),
                     ),
                   if (widget.showDataFitButton &&
                       (widget._mainSeries.entries?.isNotEmpty ?? false))
                     Positioned(
                       bottom: 0,
-                      left: 0,
+                      left: context
+                                  .read<ChartConfig>()
+                                  .chartAxisConfig
+                                  .yAxisLabelPosition ==
+                              YAxisLabelPosition.left
+                          ? (context
+                                      .read<ChartConfig>()
+                                      .chartAxisConfig
+                                      .yAxisLabelsOverlay
+                                  ? 0
+                                  : quoteLabelsTouchAreaWidth)
+                          : 0,
                       child: _buildDataFitButton(),
                     ),
                 ],
@@ -489,11 +511,11 @@ class _ChartImplementationState extends BasicChartState<MainChart> {
           onCrosshairAppeared: () {
             _isCrosshairMode = true;
             widget.onCrosshairAppeared?.call();
-            crosshairZoomOutAnimationController.forward();
+            // crosshairZoomOutAnimationController.forward();
           },
           onCrosshairDisappeared: () {
             _isCrosshairMode = false;
-            crosshairZoomOutAnimationController.reverse();
+            // crosshairZoomOutAnimationController.reverse();
           },
         ),
       );
@@ -504,7 +526,12 @@ class _ChartImplementationState extends BasicChartState<MainChart> {
         quoteFromCanvasY: chartQuoteFromCanvasY,
         epochToCanvasX: xAxis.xFromEpoch,
         quoteToCanvasY: chartQuoteToCanvasY,
-        quoteLabelsTouchAreaWidth: quoteLabelsTouchAreaWidth,
+        quoteLabelsTouchAreaWidth:
+            context.read<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay
+                ? 0
+                : quoteLabelsTouchAreaWidth,
+        yAxisLabelPosition:
+            context.read<ChartConfig>().chartAxisConfig.yAxisLabelPosition,
         showCrosshairCursor: widget.showCrosshair,
         onCrosshairDisappeared: widget.onCrosshairDisappeared,
         onCrosshairHover: widget.onCrosshairHover,

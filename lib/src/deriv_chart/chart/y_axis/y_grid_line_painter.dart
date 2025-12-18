@@ -1,6 +1,8 @@
 import 'package:deriv_chart/src/theme/painting_styles/grid_style.dart';
 import 'package:flutter/material.dart';
 
+import '../../../models/chart_axis_config.dart';
+
 /// A `CustomPainter` that paints the Y axis grids.
 
 class YGridLinePainter extends CustomPainter {
@@ -11,6 +13,8 @@ class YGridLinePainter extends CustomPainter {
     required this.quoteToCanvasY,
     required this.style,
     required this.labelWidth,
+    this.labelPosition = YAxisLabelPosition.right,
+    this.labelsOverlay = false,
   });
 
   /// The list of quotes.
@@ -25,15 +29,27 @@ class YGridLinePainter extends CustomPainter {
   /// The width of the grid line's label
   final double labelWidth;
 
+  /// Which side to reserve space for Y-axis labels.
+  final YAxisLabelPosition labelPosition;
+
+  /// If `true`, do not reserve any space (labels are drawn on top).
+  final bool labelsOverlay;
+
   @override
   void paint(Canvas canvas, Size size) {
     for (final double quote in gridLineQuotes) {
       final double y = quoteToCanvasY(quote);
 
+      final double reservedWidth = labelsOverlay
+          ? 0
+          : labelWidth + style.labelHorizontalPadding * 2;
+
       canvas.drawLine(
-        Offset(0, y),
+        Offset(labelPosition == YAxisLabelPosition.left ? reservedWidth : 0, y),
         Offset(
-          size.width - labelWidth - style.labelHorizontalPadding * 2,
+          labelPosition == YAxisLabelPosition.left
+              ? size.width
+              : size.width - reservedWidth,
           y,
         ),
         Paint()

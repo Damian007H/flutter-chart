@@ -2,6 +2,7 @@ import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_data.
 import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_series/series.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/x_axis/x_axis_model.dart';
 import 'package:deriv_chart/src/misc/callbacks.dart';
+import 'package:deriv_chart/src/models/chart_axis_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class CrosshairAreaWeb extends StatefulWidget {
     this.quoteLabelsTouchAreaWidth = 70,
     this.showCrosshairCursor = true,
     this.pipSize = 4,
+    this.yAxisLabelPosition = YAxisLabelPosition.right,
     Key? key,
     this.onCrosshairAppeared,
     this.onCrosshairDisappeared,
@@ -35,6 +37,9 @@ class CrosshairAreaWeb extends StatefulWidget {
 
   /// Whether the crosshair cursor should be shown or not.
   final bool showCrosshairCursor;
+
+  /// Which side the Y-axis labels occupy (used to reserve hit-test area).
+  final YAxisLabelPosition yAxisLabelPosition;
 
   /// Conversion function for converting chart's canvas' X position to epoch.
   final EpochFromX epochFromCanvasX;
@@ -81,7 +86,12 @@ class _CrosshairAreaWebState extends State<CrosshairAreaWeb> {
 
   @override
   Widget build(BuildContext context) => Positioned.fill(
-        right: widget.quoteLabelsTouchAreaWidth,
+        left: widget.yAxisLabelPosition == YAxisLabelPosition.left
+            ? widget.quoteLabelsTouchAreaWidth
+            : 0,
+        right: widget.yAxisLabelPosition == YAxisLabelPosition.right
+            ? widget.quoteLabelsTouchAreaWidth
+            : 0,
         child: Listener(
           behavior: HitTestBehavior.translucent,
           onPointerMove: (PointerMoveEvent ev) =>
