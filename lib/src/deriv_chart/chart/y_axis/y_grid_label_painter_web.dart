@@ -1,5 +1,6 @@
 import 'package:deriv_chart/src/deriv_chart/chart/helpers/paint_functions/paint_text.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/y_axis/y_grid_label_painter.dart';
+import 'package:deriv_chart/src/models/chart_axis_config.dart';
 import 'package:flutter/material.dart';
 
 /// A painter for drawing Y-axis grid labels in a web-based chart.
@@ -13,6 +14,7 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
     required super.pipSize,
     required super.quoteToCanvasY,
     required super.style,
+    super.labelPosition,
   });
 
   @override
@@ -30,8 +32,12 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
         canvas,
         text: quote.toStringAsFixed(pipSize),
         style: textStyle,
-        anchor: Offset(size.width - style.labelHorizontalPadding, y),
-        anchorAlignment: Alignment.centerRight,
+        anchor: labelPosition == YAxisLabelPosition.left
+            ? Offset(style.labelHorizontalPadding, y)
+            : Offset(size.width - style.labelHorizontalPadding, y),
+        anchorAlignment: labelPosition == YAxisLabelPosition.left
+            ? Alignment.centerLeft
+            : Alignment.centerRight,
       );
     }
   }

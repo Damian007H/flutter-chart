@@ -23,6 +23,8 @@ class ChartAxisConfig {
     this.showEpochGrid = true,
     this.showFrame = false,
     this.smoothScrolling = true,
+    this.yAxisLabelPosition = YAxisLabelPosition.right,
+    this.yAxisLabelsOverlay = false,
   });
 
   /// Top quote bound target for animated transition.
@@ -60,16 +62,30 @@ class ChartAxisConfig {
   /// Default is `true`.
   final bool smoothScrolling;
 
+  /// The side of the chart where Y-axis (quote) labels are drawn.
+  final YAxisLabelPosition yAxisLabelPosition;
+
+  /// If `true`, Y-axis labels are painted on top of the chart (no separate
+  /// reserved area is subtracted from the plot width).
+  final bool yAxisLabelsOverlay;
+
   /// Creates a copy of this ChartAxisConfig but with the given fields replaced.
   ChartAxisConfig copyWith({
     double? initialTopBoundQuote,
     double? initialBottomBoundQuote,
     double? maxCurrentTickOffset,
+    YAxisLabelPosition? yAxisLabelPosition,
+    bool? yAxisLabelsOverlay,
   }) =>
       ChartAxisConfig(
         initialTopBoundQuote: initialTopBoundQuote ?? this.initialTopBoundQuote,
         initialBottomBoundQuote:
             initialBottomBoundQuote ?? this.initialBottomBoundQuote,
         maxCurrentTickOffset: maxCurrentTickOffset ?? this.maxCurrentTickOffset,
+        yAxisLabelPosition: yAxisLabelPosition ?? this.yAxisLabelPosition,
+        yAxisLabelsOverlay: yAxisLabelsOverlay ?? this.yAxisLabelsOverlay,
       );
 }
+
+/// Indicates where the Y-axis labels are rendered.
+enum YAxisLabelPosition { left, right }

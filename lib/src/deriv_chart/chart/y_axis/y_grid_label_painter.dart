@@ -1,4 +1,5 @@
 import 'package:deriv_chart/src/deriv_chart/chart/helpers/paint_functions/paint_text.dart';
+import 'package:deriv_chart/src/models/chart_axis_config.dart';
 import 'package:deriv_chart/src/theme/painting_styles/grid_style.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class YGridLabelPainter extends CustomPainter {
     required this.pipSize,
     required this.quoteToCanvasY,
     required this.style,
+    this.labelPosition = YAxisLabelPosition.right,
   });
 
   /// Number of digits after decimal point in price.
@@ -25,6 +27,9 @@ class YGridLabelPainter extends CustomPainter {
 
   final GridStyle style;
 
+  /// Which side to paint Y-axis labels on.
+  final YAxisLabelPosition labelPosition;
+
   @override
   void paint(Canvas canvas, Size size) {
     for (final double quote in gridLineQuotes) {
@@ -34,8 +39,12 @@ class YGridLabelPainter extends CustomPainter {
         canvas,
         text: quote.toStringAsFixed(pipSize),
         style: style.yLabelStyle,
-        anchor: Offset(size.width - style.labelHorizontalPadding, y),
-        anchorAlignment: Alignment.centerRight,
+        anchor: labelPosition == YAxisLabelPosition.left
+            ? Offset(style.labelHorizontalPadding, y)
+            : Offset(size.width - style.labelHorizontalPadding, y),
+        anchorAlignment: labelPosition == YAxisLabelPosition.left
+            ? Alignment.centerLeft
+            : Alignment.centerRight,
       );
     }
   }

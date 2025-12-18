@@ -61,6 +61,7 @@ class _ChartStateWeb extends _ChartState {
                 granularity: widget.granularity,
                 pipSize: widget.bottomConfigs[index].pipSize,
                 title: widget.bottomConfigs[index].title,
+                chartAxisConfig: widget.chartAxisConfig,
                 currentTickAnimationDuration: currentTickAnimationDuration,
                 quoteBoundsAnimationDuration: quoteBoundsAnimationDuration,
                 bottomChartTitleMargin: widget.bottomChartTitleMargin,

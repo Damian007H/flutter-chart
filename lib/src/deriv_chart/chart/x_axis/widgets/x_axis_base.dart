@@ -1,6 +1,7 @@
 import 'package:deriv_chart/src/deriv_chart/chart/gestures/gesture_manager.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/helpers/functions/helper_functions.dart';
 import 'package:deriv_chart/src/misc/callbacks.dart';
+import 'package:deriv_chart/src/models/chart_axis_config.dart';
 import 'package:deriv_chart/src/models/chart_config.dart';
 import 'package:deriv_chart/src/models/tick.dart';
 import 'package:deriv_chart/src/theme/chart_theme.dart';
@@ -163,14 +164,18 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             final ChartTheme _chartTheme = context.watch<ChartTheme>();
-            final double yAxisLabelsAreaWidth = (widget.entries.isNotEmpty
-                    ? labelWidth(
-                        widget.entries.first.quote,
-                        _chartTheme.gridStyle.yLabelStyle,
-                        widget.pipSize,
-                      )
-                    : 100) +
-                _chartTheme.gridStyle.labelHorizontalPadding;
+            final ChartAxisConfig axisConfig =
+                context.read<ChartConfig>().chartAxisConfig;
+            final double yAxisLabelsAreaWidth = axisConfig.yAxisLabelsOverlay
+                ? 0
+                : (widget.entries.isNotEmpty
+                        ? labelWidth(
+                            widget.entries.first.quote,
+                            _chartTheme.gridStyle.yLabelStyle,
+                            widget.pipSize,
+                          )
+                        : 100) +
+                    _chartTheme.gridStyle.labelHorizontalPadding;
             // Update x-axis width.
             context.watch<XAxisModel>().width = constraints.maxWidth;
             context.watch<XAxisModel>().graphAreaWidth =
@@ -206,14 +211,23 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
                   child: widget.child,
                 ),
                 Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                      width: widget.entries.isNotEmpty
-                          ? yAxisLabelsAreaWidth
-                          : 100,
-                      height: _chartTheme.gridStyle.xLabelsAreaHeight,
-                      color: _chartTheme.backgroundColor,
-                    ))
+                  alignment: context
+                              .read<ChartConfig>()
+                              .chartAxisConfig
+                              .yAxisLabelPosition ==
+                          YAxisLabelPosition.left
+                      ? Alignment.bottomLeft
+                      : Alignment.bottomRight,
+                  child: Container(
+                    width: axisConfig.yAxisLabelsOverlay
+                        ? 0
+                        : (widget.entries.isNotEmpty
+                            ? yAxisLabelsAreaWidth
+                            : 100),
+                    height: _chartTheme.gridStyle.xLabelsAreaHeight,
+                    color: _chartTheme.backgroundColor,
+                  ),
+                )
               ],
             );
           },

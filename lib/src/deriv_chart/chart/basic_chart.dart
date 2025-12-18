@@ -384,8 +384,13 @@ class BasicChartState<T extends BasicChart> extends State<T>
           )
         : 0;
 
-    YAxisConfig.instance.setLabelWidth(calculatedLabelWidth +
-        context.watch<ChartTheme>().gridStyle.labelHorizontalPadding * 2);
+    YAxisConfig.instance
+      ..setLabelWidth(calculatedLabelWidth +
+          context.watch<ChartTheme>().gridStyle.labelHorizontalPadding * 2)
+      ..setLabelPosition(
+          context.watch<ChartConfig>().chartAxisConfig.yAxisLabelPosition)
+      ..setLabelsOverlay(
+          context.watch<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay);
 
     return MultipleAnimatedBuilder(
       animations: getQuoteGridAnimations(),
@@ -396,6 +401,10 @@ class BasicChartState<T extends BasicChart> extends State<T>
             quoteToCanvasY: chartQuoteToCanvasY,
             style: context.watch<ChartTheme>().gridStyle,
             labelWidth: calculatedLabelWidth,
+            labelPosition:
+                context.watch<ChartConfig>().chartAxisConfig.yAxisLabelPosition,
+            labelsOverlay:
+                context.watch<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay,
           ),
         ),
       ),
@@ -434,12 +443,20 @@ class BasicChartState<T extends BasicChart> extends State<T>
                     pipSize: widget.pipSize,
                     quoteToCanvasY: chartQuoteToCanvasY,
                     style: context.watch<ChartTheme>().gridStyle,
+                    labelPosition: context
+                        .watch<ChartConfig>()
+                        .chartAxisConfig
+                        .yAxisLabelPosition,
                   )
                 : YGridLabelPainter(
                     gridLineQuotes: gridLineQuotes,
                     pipSize: widget.pipSize,
                     quoteToCanvasY: chartQuoteToCanvasY,
                     style: context.watch<ChartTheme>().gridStyle,
+                    labelPosition: context
+                        .watch<ChartConfig>()
+                        .chartAxisConfig
+                        .yAxisLabelPosition,
                   ),
           ),
         ),
@@ -495,7 +512,11 @@ class BasicChartState<T extends BasicChart> extends State<T>
 
   bool _onQuoteLabelsTouchArea(Offset position) =>
       chartPosition != null &&
-      position.dx > (xAxis.width! - quoteLabelsTouchAreaWidth) &&
+      (context.read<ChartConfig>().chartAxisConfig.yAxisLabelPosition ==
+              YAxisLabelPosition.left
+          ? position.dx < (chartPosition!.dx + quoteLabelsTouchAreaWidth)
+          : position.dx >
+              (chartPosition!.dx + xAxis.width! - quoteLabelsTouchAreaWidth)) &&
       position.dy > chartPosition!.dy &&
       position.dy < chartPosition!.dy + canvasSize!.height;
 

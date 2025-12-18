@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:deriv_chart/deriv_chart.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/crosshair/crosshair_area_web.dart';
+import 'package:deriv_chart/src/models/chart_axis_config.dart';
 import 'package:provider/provider.dart';
 
 import 'basic_chart.dart';
@@ -21,6 +22,7 @@ class BottomChart extends BasicChart {
     required this.title,
     int pipSize = 4,
     Key? key,
+    ChartAxisConfig? chartAxisConfig,
     this.onRemove,
     this.onEdit,
     this.onExpandToggle,
@@ -35,7 +37,12 @@ class BottomChart extends BasicChart {
     this.bottomChartTitleMargin,
     super.currentTickAnimationDuration,
     super.quoteBoundsAnimationDuration,
-  }) : super(key: key, mainSeries: series, pipSize: pipSize);
+  }) : super(
+          key: key,
+          mainSeries: series,
+          pipSize: pipSize,
+          chartAxisConfig: chartAxisConfig,
+        );
 
   /// For candles: Duration of one candle in ms.
   /// For ticks: Average ms difference between two consecutive ticks.
@@ -180,7 +187,14 @@ class _BottomChartState extends BasicChartState<BottomChart> {
         quoteFromCanvasY: chartQuoteFromCanvasY,
         epochToCanvasX: xAxis.xFromEpoch,
         quoteToCanvasY: chartQuoteToCanvasY,
-        quoteLabelsTouchAreaWidth: quoteLabelsTouchAreaWidth,
+        quoteLabelsTouchAreaWidth:
+            context.read<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay
+                ? 0
+                : quoteLabelsTouchAreaWidth,
+        yAxisLabelPosition: context
+            .read<ChartConfig>()
+            .chartAxisConfig
+            .yAxisLabelPosition,
         showCrosshairCursor: widget.showCrosshair,
         onCrosshairDisappeared: widget.onCrosshairDisappeared,
         onCrosshairHover: widget.onCrosshairHover,
@@ -191,6 +205,7 @@ class _BottomChartState extends BasicChartState<BottomChart> {
     final ChartConfig chartConfig = ChartConfig(
       pipSize: widget.pipSize,
       granularity: widget.granularity,
+      chartAxisConfig: widget.chartAxisConfig,
     );
 
     return Provider<ChartConfig>.value(
