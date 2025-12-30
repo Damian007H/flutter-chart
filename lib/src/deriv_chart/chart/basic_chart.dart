@@ -376,21 +376,22 @@ class BasicChartState<T extends BasicChart> extends State<T>
       );
 
   Widget _buildQuoteGridLine(List<double> gridLineQuotes) {
+    final ChartAxisConfig axisConfig =
+        context.watch<ChartConfig>().chartAxisConfig;
     final double calculatedLabelWidth = (gridLineQuotes.isNotEmpty)
         ? labelWidth(
             gridLineQuotes.first,
             context.watch<ChartTheme>().gridStyle.yLabelStyle,
             widget.pipSize,
+            formatter: axisConfig.yAxisLabelFormatter,
           )
         : 0;
 
     YAxisConfig.instance
       ..setLabelWidth(calculatedLabelWidth +
           context.watch<ChartTheme>().gridStyle.labelHorizontalPadding * 2)
-      ..setLabelPosition(
-          context.watch<ChartConfig>().chartAxisConfig.yAxisLabelPosition)
-      ..setLabelsOverlay(
-          context.watch<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay);
+      ..setLabelPosition(axisConfig.yAxisLabelPosition)
+      ..setLabelsOverlay(axisConfig.yAxisLabelsOverlay);
 
     return MultipleAnimatedBuilder(
       animations: getQuoteGridAnimations(),
@@ -401,10 +402,8 @@ class BasicChartState<T extends BasicChart> extends State<T>
             quoteToCanvasY: chartQuoteToCanvasY,
             style: context.watch<ChartTheme>().gridStyle,
             labelWidth: calculatedLabelWidth,
-            labelPosition:
-                context.watch<ChartConfig>().chartAxisConfig.yAxisLabelPosition,
-            labelsOverlay:
-                context.watch<ChartConfig>().chartAxisConfig.yAxisLabelsOverlay,
+            labelPosition: axisConfig.yAxisLabelPosition,
+            labelsOverlay: axisConfig.yAxisLabelsOverlay,
           ),
         ),
       ),
@@ -447,6 +446,10 @@ class BasicChartState<T extends BasicChart> extends State<T>
                         .watch<ChartConfig>()
                         .chartAxisConfig
                         .yAxisLabelPosition,
+                    labelFormatter: context
+                        .watch<ChartConfig>()
+                        .chartAxisConfig
+                        .yAxisLabelFormatter,
                   )
                 : YGridLabelPainter(
                     gridLineQuotes: gridLineQuotes,
@@ -457,6 +460,10 @@ class BasicChartState<T extends BasicChart> extends State<T>
                         .watch<ChartConfig>()
                         .chartAxisConfig
                         .yAxisLabelPosition,
+                    labelFormatter: context
+                        .watch<ChartConfig>()
+                        .chartAxisConfig
+                        .yAxisLabelFormatter,
                   ),
           ),
         ),
@@ -496,7 +503,9 @@ class BasicChartState<T extends BasicChart> extends State<T>
   void _onPanUpdate(DragUpdateDetails details) {
     if (_panStartedOnQuoteLabelsArea &&
         _onQuoteLabelsTouchArea(details.globalPosition)) {
-      _scaleVertically(details.delta.dy);
+      if (context.read<ChartConfig>().chartAxisConfig.enableScaleGesture) {
+        _scaleVertically(details.delta.dy);
+      }
     }
   }
 

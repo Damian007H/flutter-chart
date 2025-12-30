@@ -15,6 +15,7 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
     required super.quoteToCanvasY,
     required super.style,
     super.labelPosition,
+    super.labelFormatter,
   });
 
   @override
@@ -27,10 +28,13 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
 
     for (final double quote in gridLineQuotes) {
       final double y = quoteToCanvasY(quote);
+      final String label = labelFormatter != null
+          ? labelFormatter!(quote, pipSize)
+          : quote.toStringAsFixed(pipSize);
 
       paintText(
         canvas,
-        text: quote.toStringAsFixed(pipSize),
+        text: label,
         style: textStyle,
         anchor: labelPosition == YAxisLabelPosition.left
             ? Offset(style.labelHorizontalPadding, y)

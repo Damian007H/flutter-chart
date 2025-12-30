@@ -57,9 +57,15 @@ String _twoDigitDuration(int duration) => duration.toString().padLeft(2, '0');
 Color calculateTextColor(Color background) =>
     background.computeLuminance() >= 0.5 ? Colors.black : Colors.white;
 
-/// Returns the width of the label with the given text,
-double labelWidth(double text, TextStyle style, int pipSize) => makeTextPainter(
-      text.toStringAsFixed(pipSize),
+/// Returns the width of the label with the given text.
+double labelWidth(
+  double text,
+  TextStyle style,
+  int pipSize, {
+  String Function(double value, int pipSize)? formatter,
+}) =>
+    makeTextPainter(
+      formatter != null ? formatter(text, pipSize) : text.toStringAsFixed(pipSize),
       style,
     ).width;
 
