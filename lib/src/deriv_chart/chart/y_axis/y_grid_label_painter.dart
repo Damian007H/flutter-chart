@@ -12,6 +12,7 @@ class YGridLabelPainter extends CustomPainter {
     required this.quoteToCanvasY,
     required this.style,
     this.labelPosition = YAxisLabelPosition.right,
+    this.labelFormatter,
   });
 
   /// Number of digits after decimal point in price.
@@ -30,14 +31,20 @@ class YGridLabelPainter extends CustomPainter {
   /// Which side to paint Y-axis labels on.
   final YAxisLabelPosition labelPosition;
 
+  /// Optional formatter for Y-axis labels.
+  final String Function(double value, int pipSize)? labelFormatter;
+
   @override
   void paint(Canvas canvas, Size size) {
     for (final double quote in gridLineQuotes) {
       final double y = quoteToCanvasY(quote);
+      final String label = labelFormatter != null
+          ? labelFormatter!(quote, pipSize)
+          : quote.toStringAsFixed(pipSize);
 
       paintText(
         canvas,
-        text: quote.toStringAsFixed(pipSize),
+        text: label,
         style: style.yLabelStyle,
         anchor: labelPosition == YAxisLabelPosition.left
             ? Offset(style.labelHorizontalPadding, y)

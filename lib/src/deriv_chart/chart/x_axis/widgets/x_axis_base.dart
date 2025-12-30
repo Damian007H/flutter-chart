@@ -173,6 +173,7 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
                             widget.entries.first.quote,
                             _chartTheme.gridStyle.yLabelStyle,
                             widget.pipSize,
+                            formatter: axisConfig.yAxisLabelFormatter,
                           )
                         : 100) +
                     _chartTheme.gridStyle.labelHorizontalPadding;

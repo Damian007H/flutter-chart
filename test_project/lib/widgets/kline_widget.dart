@@ -74,6 +74,7 @@ class _KChartState extends State<KChart> {
             yAxisLabelPosition: YAxisLabelPosition.left,
             yAxisLabelsOverlay: true,
             maxCurrentTickOffset: centerPaddingPx,
+            yAxisLabelFormatter: _formatYAxisLabel,
           ),
           showCrosshair: false,
           dataFitEnabled: true,
@@ -82,5 +83,22 @@ class _KChartState extends State<KChart> {
         );
       },
     );
+  }
+
+  String _formatYAxisLabel(double value, int pipSize) {
+    final double absValue = value.abs();
+    if (absValue >= 1e12) {
+      return '${(value / 1e12).toStringAsFixed(2)}T';
+    }
+    if (absValue >= 1e9) {
+      return '${(value / 1e9).toStringAsFixed(2)}B';
+    }
+    if (absValue >= 1e6) {
+      return '${(value / 1e6).toStringAsFixed(2)}M';
+    }
+    if (absValue >= 1e3) {
+      return '${(value / 1e3).toStringAsFixed(2)}K';
+    }
+    return value.toStringAsFixed(pipSize);
   }
 }

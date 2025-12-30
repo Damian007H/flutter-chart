@@ -25,6 +25,7 @@ class ChartAxisConfig {
     this.smoothScrolling = true,
     this.yAxisLabelPosition = YAxisLabelPosition.right,
     this.yAxisLabelsOverlay = false,
+    this.yAxisLabelFormatter,
   });
 
   /// Top quote bound target for animated transition.
@@ -69,6 +70,11 @@ class ChartAxisConfig {
   /// reserved area is subtracted from the plot width).
   final bool yAxisLabelsOverlay;
 
+  /// Optional formatter for Y-axis labels.
+  ///
+  /// The callback receives the raw quote value and pip size.
+  final String Function(double value, int pipSize)? yAxisLabelFormatter;
+
   /// Creates a copy of this ChartAxisConfig but with the given fields replaced.
   ChartAxisConfig copyWith({
     double? initialTopBoundQuote,
@@ -76,6 +82,7 @@ class ChartAxisConfig {
     double? maxCurrentTickOffset,
     YAxisLabelPosition? yAxisLabelPosition,
     bool? yAxisLabelsOverlay,
+    String Function(double value, int pipSize)? yAxisLabelFormatter,
   }) =>
       ChartAxisConfig(
         initialTopBoundQuote: initialTopBoundQuote ?? this.initialTopBoundQuote,
@@ -84,6 +91,7 @@ class ChartAxisConfig {
         maxCurrentTickOffset: maxCurrentTickOffset ?? this.maxCurrentTickOffset,
         yAxisLabelPosition: yAxisLabelPosition ?? this.yAxisLabelPosition,
         yAxisLabelsOverlay: yAxisLabelsOverlay ?? this.yAxisLabelsOverlay,
+        yAxisLabelFormatter: yAxisLabelFormatter ?? this.yAxisLabelFormatter,
       );
 }
 
