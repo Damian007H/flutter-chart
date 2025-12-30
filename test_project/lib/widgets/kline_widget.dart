@@ -37,25 +37,15 @@ class _KChartState extends State<KChart> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLight = false;
-    ChartDefaultTheme theme = isLight ? KLineLight() : KLineDark();
-
-    final int targetVisiblePoints = widget.ticks.length;
     const int granularityMs = 5 * 60 * 1000;
-
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final double chartWidthPx = constraints.maxWidth;
-        final double intervalWidthPx = (chartWidthPx / targetVisiblePoints).clamp(1.0, 80.0);
-        final double msPerPx = granularityMs / intervalWidthPx;
-        final double dataWidthPx = intervalWidthPx * widget.ticks.length;
-        final double centerPaddingPx = ((chartWidthPx - dataWidthPx) / 2).clamp(0.0, chartWidthPx);
 
         return DerivChart(
           mainSeries: LineSeries(widget.ticks),
           activeSymbol: "BTC",
           granularity: granularityMs,
-          theme: theme,
+          theme: KLineDark(),
           indicatorsRepo: AddOnsRepository<IndicatorConfig>(
             createAddOn: (m) => IndicatorConfig.fromJson(m),
             onEditCallback: (_) {},
@@ -67,18 +57,16 @@ class _KChartState extends State<KChart> {
             sharedPrefKey: 'BTC',
           ),
           controller: _controller,
-          msPerPx: msPerPx,
-          minIntervalWidth: intervalWidthPx,
-          maxIntervalWidth: intervalWidthPx,
           chartAxisConfig: ChartAxisConfig(
             yAxisLabelPosition: YAxisLabelPosition.left,
             yAxisLabelsOverlay: true,
-            maxCurrentTickOffset: centerPaddingPx,
             yAxisLabelFormatter: _formatYAxisLabel,
+            enableScaleGesture: false,
           ),
           showCrosshair: false,
           dataFitEnabled: true,
           showDataFitButton: false,
+          dataFitPadding: EdgeInsets.zero,
           isLive: true,
         );
       },
