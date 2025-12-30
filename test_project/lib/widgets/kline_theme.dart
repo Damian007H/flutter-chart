@@ -1,7 +1,7 @@
 import 'package:deriv_chart/deriv_chart.dart';
 import 'package:flutter/material.dart';
 
-class KLineDark extends ChartDefaultLightTheme {
+class KLineDark extends ChartDefaultDarkTheme {
   @override
   Color get areaLineColor => Color(0xFF12B76A);
 
@@ -12,7 +12,7 @@ class KLineDark extends ChartDefaultLightTheme {
   Color get areaGradientEnd => Color(0x00147500);
 
   @override
-  Color get backgroundColor => Color(0xFFFFFFFF);
+  Color get backgroundColor => Color(0xFF000000);
 }
 
 class KLineLight extends ChartDefaultLightTheme {

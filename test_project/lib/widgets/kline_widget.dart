@@ -19,25 +19,26 @@ class _KChartState extends State<KChart> {
   @override
   void initState() {
     super.initState();
-    _lockHorizontalScroll();
+    _syncChartMode();
   }
 
   @override
   void didUpdateWidget(covariant KChart oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _lockHorizontalScroll();
+    _syncChartMode();
   }
 
-  void _lockHorizontalScroll() {
+  void _syncChartMode() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.toggleXScrollBlock?.call(isXScrollBlocked: true);
+      _controller.toggleDataFitMode?.call(enableDataFit: true);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isLight = true;
-    ChartDefaultTheme theme = isLight ? KLineLight() : KLineLight();
+    bool isLight = false;
+    ChartDefaultTheme theme = isLight ? KLineLight() : KLineDark();
 
     final int targetVisiblePoints = widget.ticks.length;
     const int granularityMs = 5 * 60 * 1000;
@@ -68,7 +69,6 @@ class _KChartState extends State<KChart> {
           controller: _controller,
           msPerPx: msPerPx,
           minIntervalWidth: intervalWidthPx,
-
           maxIntervalWidth: intervalWidthPx,
           chartAxisConfig: ChartAxisConfig(
             yAxisLabelPosition: YAxisLabelPosition.left,
@@ -76,6 +76,8 @@ class _KChartState extends State<KChart> {
             maxCurrentTickOffset: centerPaddingPx,
           ),
           showCrosshair: false,
+          dataFitEnabled: true,
+          showDataFitButton: false,
           isLive: true,
         );
       },
