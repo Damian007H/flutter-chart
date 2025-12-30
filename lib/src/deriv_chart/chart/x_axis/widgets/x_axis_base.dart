@@ -117,10 +117,13 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
     );
 
     gestureManager = context.read<GestureManagerState>()
-      ..registerCallback(_model.onScaleAndPanStart)
-      ..registerCallback(_model.onScaleUpdate)
-      ..registerCallback(_model.onPanUpdate)
-      ..registerCallback(_model.onScaleAndPanEnd);
+      ..registerCallback(_model.onPanUpdate);
+    if (chartConfig.chartAxisConfig.enableScaleGesture) {
+      gestureManager
+        ..registerCallback(_model.onScaleAndPanStart)
+        ..registerCallback(_model.onScaleUpdate)
+        ..registerCallback(_model.onScaleAndPanEnd);
+    }
   }
 
   void _onVisibleAreaChanged() {

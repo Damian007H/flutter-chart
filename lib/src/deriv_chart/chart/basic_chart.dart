@@ -503,7 +503,9 @@ class BasicChartState<T extends BasicChart> extends State<T>
   void _onPanUpdate(DragUpdateDetails details) {
     if (_panStartedOnQuoteLabelsArea &&
         _onQuoteLabelsTouchArea(details.globalPosition)) {
-      _scaleVertically(details.delta.dy);
+      if (context.read<ChartConfig>().chartAxisConfig.enableScaleGesture) {
+        _scaleVertically(details.delta.dy);
+      }
     }
   }
 
