@@ -66,10 +66,7 @@ void _paintTimeGridLines(
         Offset(xCoords[i], 0),
         Offset(xCoords[i], size.height - gridStyle.xLabelsAreaHeight),
         Paint()
-          // checking if msPerPx is <  300000
-          ..color = (msPerPx < 300000 && checkNewDate(time[i]))
-              ? style.verticalBarrierStyle.color
-              : gridStyle.gridLineColor
+          ..color =  gridStyle.gridLineColor
           ..style = PaintingStyle.stroke
           ..strokeWidth = gridStyle.lineThickness,
       );
