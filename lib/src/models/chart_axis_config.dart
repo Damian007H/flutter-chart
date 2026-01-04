@@ -26,6 +26,7 @@ class ChartAxisConfig {
     this.yAxisLabelPosition = YAxisLabelPosition.right,
     this.yAxisLabelsOverlay = false,
     this.yAxisLabelFormatter,
+    this.xAxisLabelFormatter,
     this.enableScaleGesture = true,
   });
 
@@ -76,6 +77,11 @@ class ChartAxisConfig {
   /// The callback receives the raw quote value and pip size.
   final String Function(double value, int pipSize)? yAxisLabelFormatter;
 
+  /// Optional formatter for X-axis (time) labels.
+  ///
+  /// The callback receives the timestamp as a [DateTime].
+  final String Function(DateTime time)? xAxisLabelFormatter;
+
   /// Whether pinch/drag zoom gestures are enabled.
   final bool enableScaleGesture;
 
@@ -87,6 +93,7 @@ class ChartAxisConfig {
     YAxisLabelPosition? yAxisLabelPosition,
     bool? yAxisLabelsOverlay,
     String Function(double value, int pipSize)? yAxisLabelFormatter,
+    String Function(DateTime time)? xAxisLabelFormatter,
     bool? enableScaleGesture,
   }) =>
       ChartAxisConfig(
@@ -97,6 +104,7 @@ class ChartAxisConfig {
         yAxisLabelPosition: yAxisLabelPosition ?? this.yAxisLabelPosition,
         yAxisLabelsOverlay: yAxisLabelsOverlay ?? this.yAxisLabelsOverlay,
         yAxisLabelFormatter: yAxisLabelFormatter ?? this.yAxisLabelFormatter,
+        xAxisLabelFormatter: xAxisLabelFormatter ?? this.xAxisLabelFormatter,
         enableScaleGesture: enableScaleGesture ?? this.enableScaleGesture,
       );
 }

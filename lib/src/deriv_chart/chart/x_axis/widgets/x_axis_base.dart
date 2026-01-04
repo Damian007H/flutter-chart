@@ -205,6 +205,7 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
                             .toList(),
                         style: _chartTheme,
                         msPerPx: _model.msPerPx,
+                        xAxisLabelFormatter: axisConfig.xAxisLabelFormatter,
                       ),
                     ),
                   ),
