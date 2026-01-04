@@ -56,6 +56,7 @@ class XAxisModel extends ChangeNotifier {
     required bool isLive,
     required double maxCurrentTickOffset,
     this.defaultIntervalWidth = 20,
+    int? fixedGridLineCount,
     bool startWithDataFitMode = false,
     int? minEpoch,
     int? maxEpoch,
@@ -67,6 +68,7 @@ class XAxisModel extends ChangeNotifier {
     this.onScroll,
   }) {
     _maxCurrentTickOffset = maxCurrentTickOffset;
+    _fixedGridLineCount = fixedGridLineCount;
 
     _nowEpoch = entries.isNotEmpty
         ? entries.last.epoch
@@ -113,6 +115,11 @@ class XAxisModel extends ChangeNotifier {
 
   /// Default to this interval width on granularity change.
   final double defaultIntervalWidth;
+
+  int? _fixedGridLineCount;
+
+  /// Fixed number of x-axis grid lines.
+  int? get fixedGridLineCount => _fixedGridLineCount;
 
   /// Max distance between [rightBoundEpoch] and [_nowEpoch] in pixels.
   /// Limits panning to the right.
@@ -561,6 +568,7 @@ class XAxisModel extends ChangeNotifier {
     int? maxEpoch,
     EdgeInsets? dataFitPadding,
     double? maxCurrentTickOffset,
+    int? fixedGridLineCount,
   }) {
     _updateIsLive(isLive);
     _updateGranularity(granularity);
@@ -570,11 +578,15 @@ class XAxisModel extends ChangeNotifier {
     _maxEpoch = maxEpoch ?? _maxEpoch;
     _dataFitPadding = dataFitPadding ?? _dataFitPadding;
     _maxCurrentTickOffset = maxCurrentTickOffset ?? _maxCurrentTickOffset;
+    _fixedGridLineCount = fixedGridLineCount ?? _fixedGridLineCount;
   }
 
   /// Returns a list of timestamps in the grid without any overlaps.
   List<DateTime> getNoOverlapGridTimestamps() {
     const double _minDistanceBetweenTimeGridLines = 80;
+    if (_fixedGridLineCount != null && _fixedGridLineCount! > 1) {
+      return _fixedGridTimestamps(_fixedGridLineCount!);
+    }
     // Calculate time labels' timestamps for current scale.
     final List<DateTime> _gridTimestamps = gridTimestamps(
       timeGridInterval: timeGridInterval(
@@ -590,5 +602,20 @@ class XAxisModel extends ChangeNotifier {
       pxBetween,
       _gapManager.isInGap,
     );
+  }
+
+  List<DateTime> _fixedGridTimestamps(int count) {
+    if (count < 2 || leftBoundEpoch >= rightBoundEpoch) {
+      return <DateTime>[];
+    }
+
+    final int startEpoch = leftBoundEpoch;
+    final int endEpoch = rightBoundEpoch;
+    final double step = (endEpoch - startEpoch) / (count - 1);
+
+    return List<DateTime>.generate(count, (int index) {
+      final int epoch = (startEpoch + step * index).round();
+      return DateTime.fromMillisecondsSinceEpoch(epoch, isUtc: true);
+    });
   }
 }

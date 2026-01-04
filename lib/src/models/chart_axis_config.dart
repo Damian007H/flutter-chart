@@ -27,6 +27,8 @@ class ChartAxisConfig {
     this.yAxisLabelsOverlay = false,
     this.yAxisLabelFormatter,
     this.xAxisLabelFormatter,
+    this.xAxisGridLineCount,
+    this.yAxisGridLineCount,
     this.enableScaleGesture = true,
   });
 
@@ -82,6 +84,14 @@ class ChartAxisConfig {
   /// The callback receives the timestamp as a [DateTime].
   final String Function(DateTime time)? xAxisLabelFormatter;
 
+  /// Fixed number of X-axis grid lines. When set, zoom-based intervals are
+  /// ignored and lines are evenly distributed across the visible range.
+  final int? xAxisGridLineCount;
+
+  /// Fixed number of Y-axis grid lines. When set, intervals are evenly
+  /// distributed across the visible quote range.
+  final int? yAxisGridLineCount;
+
   /// Whether pinch/drag zoom gestures are enabled.
   final bool enableScaleGesture;
 
@@ -94,6 +104,8 @@ class ChartAxisConfig {
     bool? yAxisLabelsOverlay,
     String Function(double value, int pipSize)? yAxisLabelFormatter,
     String Function(DateTime time)? xAxisLabelFormatter,
+    int? xAxisGridLineCount,
+    int? yAxisGridLineCount,
     bool? enableScaleGesture,
   }) =>
       ChartAxisConfig(
@@ -105,6 +117,8 @@ class ChartAxisConfig {
         yAxisLabelsOverlay: yAxisLabelsOverlay ?? this.yAxisLabelsOverlay,
         yAxisLabelFormatter: yAxisLabelFormatter ?? this.yAxisLabelFormatter,
         xAxisLabelFormatter: xAxisLabelFormatter ?? this.xAxisLabelFormatter,
+        xAxisGridLineCount: xAxisGridLineCount ?? this.xAxisGridLineCount,
+        yAxisGridLineCount: yAxisGridLineCount ?? this.yAxisGridLineCount,
         enableScaleGesture: enableScaleGesture ?? this.enableScaleGesture,
       );
 }
