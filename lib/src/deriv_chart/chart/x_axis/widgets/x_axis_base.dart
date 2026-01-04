@@ -114,6 +114,7 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
       minIntervalWidth: widget.minIntervalWidth,
       maxIntervalWidth: widget.maxIntervalWidth,
       dataFitPadding: widget.dataFitPadding,
+      fixedGridLineCount: chartConfig.chartAxisConfig.xAxisGridLineCount,
     );
 
     gestureManager = context.read<GestureManagerState>()
@@ -144,6 +145,8 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
       dataFitPadding: widget.dataFitPadding,
       maxCurrentTickOffset:
           context.read<ChartConfig>().chartAxisConfig.maxCurrentTickOffset,
+      fixedGridLineCount:
+          context.read<ChartConfig>().chartAxisConfig.xAxisGridLineCount,
     );
   }
 
@@ -205,6 +208,7 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
                             .toList(),
                         style: _chartTheme,
                         msPerPx: _model.msPerPx,
+                        xAxisLabelFormatter: axisConfig.xAxisLabelFormatter,
                       ),
                     ),
                   ),

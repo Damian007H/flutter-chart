@@ -27,15 +27,19 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
     );
 
     for (final double quote in gridLineQuotes) {
-      final double y = quoteToCanvasY(quote);
       final String label = labelFormatter != null
           ? labelFormatter!(quote, pipSize)
           : quote.toStringAsFixed(pipSize);
+      final TextPainter painter = makeTextPainter(label, textStyle);
+      final double halfHeight = painter.height / 2;
+      final double y = quoteToCanvasY(quote).clamp(
+        halfHeight,
+        size.height - halfHeight,
+      );
 
-      paintText(
+      paintWithTextPainter(
         canvas,
-        text: label,
-        style: textStyle,
+        painter: painter,
         anchor: labelPosition == YAxisLabelPosition.left
             ? Offset(style.labelHorizontalPadding, y)
             : Offset(size.width - style.labelHorizontalPadding, y),

@@ -11,6 +11,7 @@ class YAxisModel {
     required double canvasHeight,
     required double topPadding,
     required double bottomPadding,
+    int? fixedGridLineCount,
   })  : _quoteGridInterval = quoteGridInterval(
           quotePerPx(
               yTopBound: yTopBound,
@@ -22,7 +23,8 @@ class YAxisModel {
         _bottomBoundQuote = bottomBoundQuote,
         _canvasHeight = canvasHeight,
         _topPadding = topPadding,
-        _bottomPadding = bottomPadding;
+        _bottomPadding = bottomPadding,
+        _fixedGridLineCount = fixedGridLineCount;
 
   /// Initializes a model with zero values.
   YAxisModel.zero()
@@ -31,7 +33,8 @@ class YAxisModel {
         _bottomBoundQuote = 0,
         _canvasHeight = 0,
         _topPadding = 0,
-        _bottomPadding = 0;
+        _bottomPadding = 0,
+        _fixedGridLineCount = null;
 
   final double _quoteGridInterval;
   final double _topBoundQuote;
@@ -39,6 +42,7 @@ class YAxisModel {
   final double _canvasHeight;
   final double _topPadding;
   final double _bottomPadding;
+  final int? _fixedGridLineCount;
 
   /// Top padding.
   double get topPadding => _topPadding;
@@ -62,6 +66,14 @@ class YAxisModel {
     final double topEdgeQuote = _topBoundQuote + _topPadding * pixelToQuote;
     final double bottomEdgeQuote =
         _bottomBoundQuote - _bottomPadding * pixelToQuote;
+    if (_fixedGridLineCount != null && _fixedGridLineCount! > 1) {
+      final double step =
+          (topEdgeQuote - bottomEdgeQuote) / (_fixedGridLineCount! - 1);
+      return List<double>.generate(
+        _fixedGridLineCount!,
+        (int index) => topEdgeQuote - step * index,
+      );
+    }
     final List<double> gridLineQuotes = <double>[];
     for (double q = topEdgeQuote - topEdgeQuote % _quoteGridInterval;
         q > bottomEdgeQuote;

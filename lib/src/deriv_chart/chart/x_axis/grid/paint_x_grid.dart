@@ -15,6 +15,7 @@ void paintXGrid(
   required ChartTheme style,
   required List<DateTime> timestamps,
   required double msPerPx,
+  String Function(DateTime time)? xAxisLabelFormatter,
 }) {
   assert(timestamps.length == xCoords.length);
   final GridStyle gridStyle = style.gridStyle;
@@ -36,6 +37,7 @@ void paintXGrid(
       xCoords: xCoords,
       gridStyle: gridStyle,
       timestamps: timestamps,
+      xAxisLabelFormatter: xAxisLabelFormatter,
     );
   } else {
     _paintTimeLabels(
@@ -44,6 +46,7 @@ void paintXGrid(
       xCoords: xCoords,
       gridStyle: gridStyle,
       timestamps: timestamps,
+      xAxisLabelFormatter: xAxisLabelFormatter,
     );
   }
 }
@@ -63,10 +66,7 @@ void _paintTimeGridLines(
         Offset(xCoords[i], 0),
         Offset(xCoords[i], size.height - gridStyle.xLabelsAreaHeight),
         Paint()
-          // checking if msPerPx is <  300000
-          ..color = (msPerPx < 300000 && checkNewDate(time[i]))
-              ? style.verticalBarrierStyle.color
-              : gridStyle.gridLineColor
+          ..color =  gridStyle.gridLineColor
           ..style = PaintingStyle.stroke
           ..strokeWidth = gridStyle.lineThickness,
       );
@@ -80,16 +80,23 @@ void _paintTimeLabels(
   required List<double> xCoords,
   required GridStyle gridStyle,
   required List<DateTime> timestamps,
+  String Function(DateTime time)? xAxisLabelFormatter,
 }) {
   for (int index = 0; index < timestamps.length; index++) {
-    paintText(
+    final String label = xAxisLabelFormatter?.call(timestamps[index]) ??
+        timeLabel(timestamps[index]);
+    final TextPainter painter = makeTextPainter(label, gridStyle.xLabelStyle);
+    final double halfWidth = painter.width / 2;
+    final double clampedX =
+        xCoords[index].clamp(halfWidth, size.width - halfWidth);
+
+    paintWithTextPainter(
       canvas,
-      text: timeLabel(timestamps[index]),
+      painter: painter,
       anchor: Offset(
-        xCoords[index],
+        clampedX,
         size.height - gridStyle.xLabelsAreaHeight / 2,
       ),
-      style: gridStyle.xLabelStyle,
     );
   }
 }
@@ -100,6 +107,7 @@ void _paintTimeLabelsWeb(
   required List<double> xCoords,
   required GridStyle gridStyle,
   required List<DateTime> timestamps,
+  String Function(DateTime time)? xAxisLabelFormatter,
 }) {
   final TextStyle textStyle = TextStyle(
     fontSize: gridStyle.xLabelStyle.fontSize,
@@ -108,14 +116,20 @@ void _paintTimeLabelsWeb(
   );
 
   for (int index = 0; index < timestamps.length; index++) {
-    paintText(
+    final String label = xAxisLabelFormatter?.call(timestamps[index]) ??
+        timeLabel(timestamps[index]);
+    final TextPainter painter = makeTextPainter(label, textStyle);
+    final double halfWidth = painter.width / 2;
+    final double clampedX =
+        xCoords[index].clamp(halfWidth, size.width - halfWidth);
+
+    paintWithTextPainter(
       canvas,
-      text: timeLabel(timestamps[index]),
+      painter: painter,
       anchor: Offset(
-        xCoords[index],
+        clampedX,
         size.height - gridStyle.xLabelsAreaHeight / 2,
       ),
-      style: textStyle,
     );
   }
 }

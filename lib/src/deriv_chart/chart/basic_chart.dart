@@ -230,6 +230,7 @@ class BasicChartState<T extends BasicChart> extends State<T>
         canvasHeight: canvasSize.height,
         topPadding: _topPadding,
         bottomPadding: _bottomPadding,
+        fixedGridLineCount: context.read<ChartConfig>().chartAxisConfig.yAxisGridLineCount,
       );
 
   /// Called to setup the current tick bounds and crosshair zoom out animations.

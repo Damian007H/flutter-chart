@@ -37,15 +37,19 @@ class YGridLabelPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     for (final double quote in gridLineQuotes) {
-      final double y = quoteToCanvasY(quote);
       final String label = labelFormatter != null
           ? labelFormatter!(quote, pipSize)
           : quote.toStringAsFixed(pipSize);
+      final TextPainter painter = makeTextPainter(label, style.yLabelStyle);
+      final double halfHeight = painter.height / 2;
+      final double y = quoteToCanvasY(quote).clamp(
+        halfHeight,
+        size.height - halfHeight,
+      );
 
-      paintText(
+      paintWithTextPainter(
         canvas,
-        text: label,
-        style: style.yLabelStyle,
+        painter: painter,
         anchor: labelPosition == YAxisLabelPosition.left
             ? Offset(style.labelHorizontalPadding, y)
             : Offset(size.width - style.labelHorizontalPadding, y),
