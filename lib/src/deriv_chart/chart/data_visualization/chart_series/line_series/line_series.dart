@@ -29,11 +29,12 @@ class LineSeries extends DataSeries<Tick> {
       );
 
   @override
-  Widget getCrossHairInfo(Tick crossHairTick, int pipSize, ChartTheme theme) =>
-      Text(
-        '${crossHairTick.quote.toStringAsFixed(pipSize)}',
-        style: const TextStyle(fontSize: 16),
-      );
+  Widget getCrossHairInfo(Tick crossHairTick, int pipSize, ChartTheme theme) {
+    return Text(
+      '${crossHairTick.quote.toStringAsFixed(pipSize)}',
+      style: TextStyle(fontSize: 16, color: theme.crosshairInformationBoxTextDefault),
+    );
+  }
 
   @override
   double maxValueOf(Tick t) => t.quote;
