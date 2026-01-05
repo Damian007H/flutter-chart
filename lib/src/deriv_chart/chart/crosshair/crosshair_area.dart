@@ -193,8 +193,7 @@ class _CrosshairAreaState extends State<CrosshairArea> {
       }
       crosshairTick = _getClosestTick();
     }
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       if (crosshairTick != null) {
         final ChartTheme theme = context.watch<ChartTheme>();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -236,7 +235,7 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               duration: animationDuration,
               child: CustomPaint(
                 size: Size(1, constraints.maxHeight),
-                painter: const CrosshairDotPainter(),
+                painter: CrosshairDotPainter(theme.crosshairLineDesktopColor),
               ),
             ),
             AnimatedPositioned(

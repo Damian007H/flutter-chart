@@ -142,7 +142,7 @@ class _IndexBaseCrossHairState extends State<IndexBaseCrossHair>
                   left: widget.indexToX(_crossHairIndex!),
                   child: CustomPaint(
                     size: Size(1, constraints.maxHeight),
-                    painter: const CrosshairDotPainter(),
+                    painter: CrosshairDotPainter(theme.crosshairLineDesktopColor),
                   ),
                 ),
                 if (_crossHairDetailSize != null) ...<Widget>[
