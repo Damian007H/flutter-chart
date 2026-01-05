@@ -126,6 +126,10 @@ class _CrosshairAreaState extends State<CrosshairArea> {
     if (_lastLongPressPosition == null) {
       return;
     }
+    if (xAxis.isScrollBlocked) {
+      xAxis.pan(0);
+      return;
+    }
 
     if (_lastLongPressPosition! < _closeDistance) {
       xAxis.pan(-_panSpeed);
