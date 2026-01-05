@@ -2,6 +2,7 @@ import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_serie
 import 'package:deriv_chart/src/deriv_chart/chart/gestures/gesture_manager.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/x_axis/x_axis_model.dart';
 import 'package:deriv_chart/src/models/tick.dart';
+import 'package:deriv_chart/src/theme/chart_theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -195,6 +196,7 @@ class _CrosshairAreaState extends State<CrosshairArea> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       if (crosshairTick != null) {
+        final ChartTheme theme = context.watch<ChartTheme>();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           final BuildContext? detailsContext = _detailsKey.currentContext;
           if (detailsContext == null) {
@@ -208,12 +210,10 @@ class _CrosshairAreaState extends State<CrosshairArea> {
           }
         });
 
-
         final double detailsWidth = _detailsWidth ?? constraints.maxWidth;
         final double maxLeft = constraints.maxWidth - detailsWidth;
         final double preferredLeft = xAxis.xFromEpoch(crosshairTick!.epoch) - detailsWidth / 2;
         final double clampedLeft = preferredLeft.clamp(0.0, maxLeft.isFinite ? maxLeft : 0.0);
-
 
         return Stack(
           children: <Widget>[
@@ -222,7 +222,12 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               left: xAxis.xFromEpoch(crosshairTick!.epoch),
               child: CustomPaint(
                 size: Size(1, constraints.maxHeight),
-                painter: const CrosshairLinePainter(),
+                painter: CrosshairLinePainter(
+                  theme.crosshairLineResponsiveUpperLineGradientStart,
+                  theme.crosshairLineResponsiveUpperLineGradientEnd,
+                  theme.crosshairLineResponsiveLowerLineGradientStart,
+                  theme.crosshairLineResponsiveLowerLineGradientEnd,
+                ),
               ),
             ),
             AnimatedPositioned(

@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 /// A custom painter to paint the crossshair `line`.
 class CrosshairLinePainter extends CustomPainter {
   /// Initializes a custom painter to paint the crossshair `line`.
-  const CrosshairLinePainter();
+  const CrosshairLinePainter(this.upperStartColor, this.upperEndColor, this.lowerStartColor, this.lowerEndColor);
+
+  final Color upperStartColor;
+  final Color upperEndColor;
+  final Color lowerStartColor;
+  final Color lowerEndColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -19,16 +24,12 @@ class CrosshairLinePainter extends CustomPainter {
           Offset.zero,
           Offset(0, size.height),
           <Color>[
-            // TODO(Ramin): Use theme color when cross-hair design got updated
-            Colors.white.withOpacity(0.1),
-            Colors.white.withOpacity(0.3),
-            Colors.white.withOpacity(0.1),
+            upperStartColor,
+            upperEndColor,
+            lowerStartColor,
+            lowerEndColor,
           ],
-          const <double>[
-            0,
-            0.5,
-            1,
-          ],
+          <double>[0.5, 0.5, 0.5, 1],
         ),
     );
   }
