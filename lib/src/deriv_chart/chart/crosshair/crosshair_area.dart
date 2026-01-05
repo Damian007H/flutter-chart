@@ -47,7 +47,8 @@ class _CrosshairAreaState extends State<CrosshairArea> {
 
   double? _lastLongPressPosition;
   int _lastLongPressPositionEpoch = -1;
-
+  double? _detailsWidth;
+  final GlobalKey _detailsKey = GlobalKey();
   final double _panSpeed = 0.08;
   static const double _closeDistance = 60;
 
@@ -194,6 +195,26 @@ class _CrosshairAreaState extends State<CrosshairArea> {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       if (crosshairTick != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final BuildContext? detailsContext = _detailsKey.currentContext;
+          if (detailsContext == null) {
+            return;
+          }
+          final double newWidth = detailsContext.size?.width ?? 0;
+          if (newWidth > 0 && newWidth != _detailsWidth) {
+            setState(() {
+              _detailsWidth = newWidth;
+            });
+          }
+        });
+
+
+        final double detailsWidth = _detailsWidth ?? constraints.maxWidth;
+        final double maxLeft = constraints.maxWidth - detailsWidth;
+        final double preferredLeft = xAxis.xFromEpoch(crosshairTick!.epoch) - detailsWidth / 2;
+        final double clampedLeft = preferredLeft.clamp(0.0, maxLeft.isFinite ? maxLeft : 0.0);
+
+
         return Stack(
           children: <Widget>[
             AnimatedPositioned(
@@ -217,12 +238,11 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               duration: animationDuration,
               top: 8,
               bottom: 0,
-              width: constraints.maxWidth,
-              left: xAxis.xFromEpoch(crosshairTick!.epoch) -
-                  constraints.maxWidth / 2,
+              left: clampedLeft,
               child: Align(
                 alignment: Alignment.topCenter,
                 child: CrosshairDetails(
+                  key: _detailsKey,
                   mainSeries: widget.mainSeries,
                   crosshairTick: crosshairTick!,
                   pipSize: widget.pipSize,
