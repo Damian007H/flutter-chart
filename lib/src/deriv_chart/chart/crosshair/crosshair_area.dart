@@ -180,8 +180,9 @@ class _CrosshairAreaState extends State<CrosshairArea> {
   @override
   Widget build(BuildContext context) {
     if (_lastLongPressPosition != null) {
-      _lastLongPressPosition = _lastLongPressPosition!.clamp(
-          _closeDistance, context.watch<XAxisModel>().width! - _closeDistance);
+      final double leftLimit = xAxis.isScrollBlocked ? 0 : _closeDistance;
+      final double rightLimit = xAxis.isScrollBlocked ? context.watch<XAxisModel>().width! : context.watch<XAxisModel>().width! - _closeDistance;
+      _lastLongPressPosition = _lastLongPressPosition!.clamp(leftLimit, rightLimit);
       final int newLongPressEpoch =
           context.watch<XAxisModel>().epochFromX(_lastLongPressPosition!);
       if (newLongPressEpoch != _lastLongPressPositionEpoch) {
