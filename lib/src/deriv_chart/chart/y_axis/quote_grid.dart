@@ -67,11 +67,11 @@ class YAxisModel {
     final double bottomEdgeQuote =
         _bottomBoundQuote - _bottomPadding * pixelToQuote;
     if (_fixedGridLineCount != null && _fixedGridLineCount! > 1) {
-      final double step =
-          (topEdgeQuote - bottomEdgeQuote) / (_fixedGridLineCount! - 1);
+      final double step = (_topBoundQuote - _bottomBoundQuote) /
+          (_fixedGridLineCount! - 1);
       return List<double>.generate(
         _fixedGridLineCount!,
-        (int index) => topEdgeQuote - step * index,
+            (int index) => _topBoundQuote - step * index,
       );
     }
     final List<double> gridLineQuotes = <double>[];
