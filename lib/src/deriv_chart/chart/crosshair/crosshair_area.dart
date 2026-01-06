@@ -1,6 +1,7 @@
 import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_series/data_series.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/gestures/gesture_manager.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/x_axis/x_axis_model.dart';
+import 'package:deriv_chart/src/misc/callbacks.dart';
 import 'package:deriv_chart/src/models/tick.dart';
 import 'package:deriv_chart/src/theme/chart_theme.dart';
 import 'package:flutter/gestures.dart';
@@ -19,6 +20,7 @@ class CrosshairArea extends StatefulWidget {
     required this.mainSeries,
     required this.quoteToCanvasY,
     this.pipSize = 4,
+    this.detailsBuilder,
     Key? key,
     this.onCrosshairAppeared,
     this.onCrosshairDisappeared,
@@ -32,6 +34,9 @@ class CrosshairArea extends StatefulWidget {
 
   /// Conversion function for converting quote to chart's canvas' Y position.
   final double Function(double) quoteToCanvasY;
+
+  /// Optional builder for crosshair details widget.
+  final CrosshairDetailsBuilder? detailsBuilder;
 
   /// Called on longpress to show candle/point details.
   final VoidCallback? onCrosshairAppeared;
@@ -243,14 +248,22 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               top: 8,
               bottom: 0,
               left: clampedLeft,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: CrosshairDetails(
-                  key: _detailsKey,
-                  mainSeries: widget.mainSeries,
-                  crosshairTick: crosshairTick!,
-                  pipSize: widget.pipSize,
-                ),
+              child: KeyedSubtree(
+                key: _detailsKey,
+                child: widget.detailsBuilder?.call(
+                      context,
+                      widget.mainSeries,
+                      crosshairTick!,
+                      widget.pipSize,
+                    ) ??
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: CrosshairDetails(
+                        mainSeries: widget.mainSeries,
+                        crosshairTick: crosshairTick!,
+                        pipSize: widget.pipSize,
+                      ),
+                    ),
               ),
             ),
           ],

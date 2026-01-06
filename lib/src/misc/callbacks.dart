@@ -1,6 +1,8 @@
 import 'package:deriv_chart/src/add_ons/add_on_config.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_data.dart';
-import 'package:flutter/gestures.dart';
+import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_series/data_series.dart';
+import 'package:deriv_chart/src/models/tick.dart';
+import 'package:flutter/material.dart';
 
 /// Called when chart is scrolled or zoomed.
 ///
@@ -49,4 +51,12 @@ typedef OnCrosshairHoverCallback = void Function(
   EpochFromX epochFromX,
   QuoteFromY quoteFromY,
   AddOnConfig? config,
+);
+
+/// Builds a custom crosshair details widget.
+typedef CrosshairDetailsBuilder = Widget Function(
+  BuildContext context,
+  DataSeries<Tick> mainSeries,
+  Tick crosshairTick,
+  int pipSize,
 );

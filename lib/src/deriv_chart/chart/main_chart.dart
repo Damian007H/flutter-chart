@@ -52,6 +52,7 @@ class MainChart extends BasicChart {
     this.onCrosshairAppeared,
     this.onCrosshairDisappeared,
     this.onCrosshairHover,
+    this.crosshairDetailsBuilder,
     this.overlaySeries,
     this.annotations,
     this.verticalPaddingFraction,
@@ -100,6 +101,9 @@ class MainChart extends BasicChart {
 
   /// Called when the crosshair cursor is hovered/moved.
   final OnCrosshairHover? onCrosshairHover;
+
+  /// Optional builder for crosshair details widget.
+  final CrosshairDetailsBuilder? crosshairDetailsBuilder;
 
   /// Chart's widget controller.
   final ChartController? controller;
@@ -506,6 +510,7 @@ class _ChartImplementationState extends BasicChartState<MainChart> {
           mainSeries: widget.mainSeries as DataSeries<Tick>,
           pipSize: widget.pipSize,
           quoteToCanvasY: chartQuoteToCanvasY,
+          detailsBuilder: widget.crosshairDetailsBuilder,
           onCrosshairAppeared: () {
             _isCrosshairMode = true;
             widget.onCrosshairAppeared?.call();
