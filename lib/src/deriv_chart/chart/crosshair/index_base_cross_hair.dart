@@ -2,6 +2,7 @@ import 'package:deriv_chart/src/deriv_chart/chart/crosshair/find.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_data.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/gestures/gesture_manager.dart';
 import 'package:deriv_chart/src/models/tick.dart';
+import 'package:deriv_chart/src/theme/chart_theme.dart';
 import 'package:deriv_chart/src/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -128,6 +129,7 @@ class _IndexBaseCrossHairState extends State<IndexBaseCrossHair>
           if (_crossHairIndex == null) {
             return const SizedBox.shrink();
           }
+          final ChartTheme theme = context.watch<ChartTheme>();
 
           return FadeTransition(
             opacity: _crossHairFadeAnimation,
@@ -140,7 +142,7 @@ class _IndexBaseCrossHairState extends State<IndexBaseCrossHair>
                   left: widget.indexToX(_crossHairIndex!),
                   child: CustomPaint(
                     size: Size(1, constraints.maxHeight),
-                    painter: const CrosshairDotPainter(),
+                    painter: CrosshairDotPainter(theme.crosshairLineDesktopColor),
                   ),
                 ),
                 if (_crossHairDetailSize != null) ...<Widget>[
@@ -162,7 +164,12 @@ class _IndexBaseCrossHairState extends State<IndexBaseCrossHair>
                         1,
                         constraints.maxHeight - _crossHairDetailSize!.height,
                       ),
-                      painter: const CrosshairLinePainter(),
+                      painter: CrosshairLinePainter(
+                        theme.crosshairLineResponsiveUpperLineGradientStart,
+                        theme.crosshairLineResponsiveUpperLineGradientEnd,
+                        theme.crosshairLineResponsiveLowerLineGradientStart,
+                        theme.crosshairLineResponsiveLowerLineGradientEnd,
+                      ),
                     ),
                   )
                 ]

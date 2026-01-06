@@ -24,31 +24,35 @@ class CrosshairDetails extends StatelessWidget {
   /// Number of decimal digits when showing prices.
   final int pipSize;
 
+
   @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(10),
-        decoration: const BoxDecoration(
-          color: Color(0xFF323738),
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _buildTimeLabel(context),
-            const SizedBox(height: 5),
-            mainSeries.getCrossHairInfo(
-                crosshairTick, pipSize, context.watch<ChartTheme>()),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    final ChartTheme theme = context.watch<ChartTheme>();
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: theme.crosshairInformationBoxContainerNormalColor,
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildTimeLabel(context),
+          const SizedBox(height: 5),
+          mainSeries.getCrossHairInfo(
+              crosshairTick, pipSize, context.watch<ChartTheme>()),
+        ],
+      ),
+    );
+  }
 
   Widget _buildTimeLabel(BuildContext context) {
-    final DateTime time =
-        DateTime.fromMillisecondsSinceEpoch(crosshairTick.epoch, isUtc: true);
+    final DateTime time = DateTime.fromMillisecondsSinceEpoch(crosshairTick.epoch, isUtc: true);
     final String timeLabel = DateFormat('dd MMM yyy - HH:mm:ss').format(time);
     return Text(
       timeLabel,
-      style: context.watch<ChartTheme>().overLine,
+      style: TextStyle(color: context.watch<ChartTheme>().crosshairInformationBoxTextSubtle),
     );
   }
 }

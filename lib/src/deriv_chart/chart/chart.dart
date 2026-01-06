@@ -74,6 +74,7 @@ class Chart extends StatefulWidget {
     this.showDataFitButton,
     this.showScrollToLastTickButton,
     this.loadingAnimationColor,
+    this.crosshairDetailsBuilder,
     Key? key,
   }) : super(key: key);
 
@@ -181,6 +182,9 @@ class Chart extends StatefulWidget {
 
   /// The color of the loading animation.
   final Color? loadingAnimationColor;
+
+  /// Optional builder for crosshair details widget.
+  final CrosshairDetailsBuilder? crosshairDetailsBuilder;
 
   /// Chart's indicators
   final Repository<IndicatorConfig>? indicatorsRepo;

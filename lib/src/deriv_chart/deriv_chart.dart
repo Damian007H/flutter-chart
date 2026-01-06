@@ -60,6 +60,7 @@ class DerivChart extends StatefulWidget {
     this.showDataFitButton,
     this.showScrollToLastTickButton,
     this.loadingAnimationColor,
+    this.crosshairDetailsBuilder,
     Key? key,
   }) : super(key: key);
 
@@ -158,6 +159,9 @@ class DerivChart extends StatefulWidget {
 
   /// The color of the loading animation.
   final Color? loadingAnimationColor;
+
+  /// Optional builder for crosshair details widget.
+  final CrosshairDetailsBuilder? crosshairDetailsBuilder;
 
   /// Chart's indicators
   ///
@@ -355,6 +359,7 @@ class _DerivChartState extends State<DerivChart> {
                 showScrollToLastTickButton: widget.showScrollToLastTickButton,
                 loadingAnimationColor: widget.loadingAnimationColor,
                 chartAxisConfig: widget.chartAxisConfig,
+                crosshairDetailsBuilder: widget.crosshairDetailsBuilder,
               ),
               if (widget.indicatorsRepo == null) _buildIndicatorsIcon(),
               if (widget.drawingToolsRepo == null) _buildDrawingToolsIcon(),

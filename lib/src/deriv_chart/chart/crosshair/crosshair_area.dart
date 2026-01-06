@@ -1,7 +1,9 @@
 import 'package:deriv_chart/src/deriv_chart/chart/data_visualization/chart_series/data_series.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/gestures/gesture_manager.dart';
 import 'package:deriv_chart/src/deriv_chart/chart/x_axis/x_axis_model.dart';
+import 'package:deriv_chart/src/misc/callbacks.dart';
 import 'package:deriv_chart/src/models/tick.dart';
+import 'package:deriv_chart/src/theme/chart_theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +20,7 @@ class CrosshairArea extends StatefulWidget {
     required this.mainSeries,
     required this.quoteToCanvasY,
     this.pipSize = 4,
+    this.detailsBuilder,
     Key? key,
     this.onCrosshairAppeared,
     this.onCrosshairDisappeared,
@@ -31,6 +34,9 @@ class CrosshairArea extends StatefulWidget {
 
   /// Conversion function for converting quote to chart's canvas' Y position.
   final double Function(double) quoteToCanvasY;
+
+  /// Optional builder for crosshair details widget.
+  final CrosshairDetailsBuilder? detailsBuilder;
 
   /// Called on longpress to show candle/point details.
   final VoidCallback? onCrosshairAppeared;
@@ -47,7 +53,8 @@ class _CrosshairAreaState extends State<CrosshairArea> {
 
   double? _lastLongPressPosition;
   int _lastLongPressPositionEpoch = -1;
-
+  double? _detailsWidth;
+  final GlobalKey _detailsKey = GlobalKey();
   final double _panSpeed = 0.08;
   static const double _closeDistance = 60;
 
@@ -126,6 +133,10 @@ class _CrosshairAreaState extends State<CrosshairArea> {
     if (_lastLongPressPosition == null) {
       return;
     }
+    if (xAxis.isScrollBlocked) {
+      xAxis.pan(0);
+      return;
+    }
 
     if (_lastLongPressPosition! < _closeDistance) {
       xAxis.pan(-_panSpeed);
@@ -176,8 +187,9 @@ class _CrosshairAreaState extends State<CrosshairArea> {
   @override
   Widget build(BuildContext context) {
     if (_lastLongPressPosition != null) {
-      _lastLongPressPosition = _lastLongPressPosition!.clamp(
-          _closeDistance, context.watch<XAxisModel>().width! - _closeDistance);
+      final double leftLimit = xAxis.isScrollBlocked ? 0 : _closeDistance;
+      final double rightLimit = xAxis.isScrollBlocked ? context.watch<XAxisModel>().width! : context.watch<XAxisModel>().width! - _closeDistance;
+      _lastLongPressPosition = _lastLongPressPosition!.clamp(leftLimit, rightLimit);
       final int newLongPressEpoch =
           context.watch<XAxisModel>().epochFromX(_lastLongPressPosition!);
       if (newLongPressEpoch != _lastLongPressPositionEpoch) {
@@ -186,9 +198,27 @@ class _CrosshairAreaState extends State<CrosshairArea> {
       }
       crosshairTick = _getClosestTick();
     }
-    return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
       if (crosshairTick != null) {
+        final ChartTheme theme = context.watch<ChartTheme>();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final BuildContext? detailsContext = _detailsKey.currentContext;
+          if (detailsContext == null) {
+            return;
+          }
+          final double newWidth = detailsContext.size?.width ?? 0;
+          if (newWidth > 0 && newWidth != _detailsWidth) {
+            setState(() {
+              _detailsWidth = newWidth;
+            });
+          }
+        });
+
+        final double detailsWidth = _detailsWidth ?? constraints.maxWidth;
+        final double maxLeft = constraints.maxWidth - detailsWidth;
+        final double preferredLeft = xAxis.xFromEpoch(crosshairTick!.epoch) - detailsWidth / 2;
+        final double clampedLeft = preferredLeft.clamp(0.0, maxLeft.isFinite ? maxLeft : 0.0);
+
         return Stack(
           children: <Widget>[
             AnimatedPositioned(
@@ -196,7 +226,12 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               left: xAxis.xFromEpoch(crosshairTick!.epoch),
               child: CustomPaint(
                 size: Size(1, constraints.maxHeight),
-                painter: const CrosshairLinePainter(),
+                painter: CrosshairLinePainter(
+                  theme.crosshairLineResponsiveUpperLineGradientStart,
+                  theme.crosshairLineResponsiveUpperLineGradientEnd,
+                  theme.crosshairLineResponsiveLowerLineGradientStart,
+                  theme.crosshairLineResponsiveLowerLineGradientEnd,
+                ),
               ),
             ),
             AnimatedPositioned(
@@ -205,23 +240,30 @@ class _CrosshairAreaState extends State<CrosshairArea> {
               duration: animationDuration,
               child: CustomPaint(
                 size: Size(1, constraints.maxHeight),
-                painter: const CrosshairDotPainter(),
+                painter: CrosshairDotPainter(theme.crosshairLineDesktopColor),
               ),
             ),
             AnimatedPositioned(
               duration: animationDuration,
               top: 8,
               bottom: 0,
-              width: constraints.maxWidth,
-              left: xAxis.xFromEpoch(crosshairTick!.epoch) -
-                  constraints.maxWidth / 2,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: CrosshairDetails(
-                  mainSeries: widget.mainSeries,
-                  crosshairTick: crosshairTick!,
-                  pipSize: widget.pipSize,
-                ),
+              left: clampedLeft,
+              child: KeyedSubtree(
+                key: _detailsKey,
+                child: widget.detailsBuilder?.call(
+                      context,
+                      widget.mainSeries,
+                      crosshairTick!,
+                      widget.pipSize,
+                    ) ??
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: CrosshairDetails(
+                        mainSeries: widget.mainSeries,
+                        crosshairTick: crosshairTick!,
+                        pipSize: widget.pipSize,
+                      ),
+                    ),
               ),
             ),
           ],

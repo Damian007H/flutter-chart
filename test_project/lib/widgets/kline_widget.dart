@@ -1,8 +1,7 @@
 import 'package:deriv_chart/deriv_chart.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'kline_theme.dart';
+import 'number_util.dart';
 
 class KChart extends StatefulWidget {
   final List<Tick> ticks;
@@ -38,14 +37,15 @@ class _KChartState extends State<KChart> {
   @override
   Widget build(BuildContext context) {
     const int granularityMs = 5 * 60 * 1000;
+    print("当前数据：${widget.ticks.length}");
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-
         return DerivChart(
+          loadingAnimationColor: Colors.grey,
           mainSeries: LineSeries(widget.ticks),
           activeSymbol: "BTC",
           granularity: granularityMs,
-          theme: KLineDark(),
+          theme: ChartDefaultLightTheme(),
           indicatorsRepo: AddOnsRepository<IndicatorConfig>(
             createAddOn: (m) => IndicatorConfig.fromJson(m),
             onEditCallback: (_) {},
@@ -58,12 +58,16 @@ class _KChartState extends State<KChart> {
           ),
           controller: _controller,
           chartAxisConfig: ChartAxisConfig(
+            yAxisGridLineCount: 4,
+            xAxisGridLineCount: 4,
             yAxisLabelPosition: YAxisLabelPosition.left,
             yAxisLabelsOverlay: true,
-            yAxisLabelFormatter: _formatYAxisLabel,
+            yAxisLabelFormatter: _formatLogYAxisLabel,
             enableScaleGesture: false,
+            xAxisLabelFormatter: (time) {
+              return "testa";
+            },
           ),
-          showCrosshair: false,
           dataFitEnabled: true,
           showDataFitButton: false,
           dataFitPadding: EdgeInsets.zero,
@@ -73,20 +77,7 @@ class _KChartState extends State<KChart> {
     );
   }
 
-  String _formatYAxisLabel(double value, int pipSize) {
-    final double absValue = value.abs();
-    if (absValue >= 1e12) {
-      return '${(value / 1e12).toStringAsFixed(2)}T';
-    }
-    if (absValue >= 1e9) {
-      return '${(value / 1e9).toStringAsFixed(2)}B';
-    }
-    if (absValue >= 1e6) {
-      return '${(value / 1e6).toStringAsFixed(2)}M';
-    }
-    if (absValue >= 1e3) {
-      return '${(value / 1e3).toStringAsFixed(2)}K';
-    }
-    return value.toStringAsFixed(pipSize);
+  String _formatLogYAxisLabel(double value, int pipSize) {
+    return NumberUtil.formatShortAmount(value.toString(), decimals: pipSize);
   }
 }
