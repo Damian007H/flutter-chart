@@ -16,38 +16,44 @@ void paintXGrid(
   required List<DateTime> timestamps,
   required double msPerPx,
   String Function(DateTime time)? xAxisLabelFormatter,
+  bool showGridLines = true,
+  bool showLabels = true,
 }) {
   assert(timestamps.length == xCoords.length);
   final GridStyle gridStyle = style.gridStyle;
 
-  _paintTimeGridLines(
-    canvas,
-    size,
-    xCoords,
-    style,
-    gridStyle,
-    timestamps,
-    msPerPx,
-  );
+  if (showGridLines) {
+    _paintTimeGridLines(
+      canvas,
+      size,
+      xCoords,
+      style,
+      gridStyle,
+      timestamps,
+      msPerPx,
+    );
+  }
 
-  if (kIsWeb) {
-    _paintTimeLabelsWeb(
-      canvas,
-      size,
-      xCoords: xCoords,
-      gridStyle: gridStyle,
-      timestamps: timestamps,
-      xAxisLabelFormatter: xAxisLabelFormatter,
-    );
-  } else {
-    _paintTimeLabels(
-      canvas,
-      size,
-      xCoords: xCoords,
-      gridStyle: gridStyle,
-      timestamps: timestamps,
-      xAxisLabelFormatter: xAxisLabelFormatter,
-    );
+  if (showLabels) {
+    if (kIsWeb) {
+      _paintTimeLabelsWeb(
+        canvas,
+        size,
+        xCoords: xCoords,
+        gridStyle: gridStyle,
+        timestamps: timestamps,
+        xAxisLabelFormatter: xAxisLabelFormatter,
+      );
+    } else {
+      _paintTimeLabels(
+        canvas,
+        size,
+        xCoords: xCoords,
+        gridStyle: gridStyle,
+        timestamps: timestamps,
+        xAxisLabelFormatter: xAxisLabelFormatter,
+      );
+    }
   }
 }
 

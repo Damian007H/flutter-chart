@@ -12,6 +12,8 @@ class XGridPainter extends CustomPainter {
     required this.timestamps,
     required this.msPerPx,
     this.xAxisLabelFormatter,
+    this.showGridLines = true,
+    this.showLabels = true,
   });
 
   /// X-coordinates of time labels.
@@ -29,6 +31,12 @@ class XGridPainter extends CustomPainter {
   /// Optional formatter for x-axis labels.
   final String Function(DateTime time)? xAxisLabelFormatter;
 
+  /// Whether to paint x-axis grid lines.
+  final bool showGridLines;
+
+  /// Whether to paint x-axis labels.
+  final bool showLabels;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (timestamps.isEmpty || xCoords.isEmpty) {
@@ -43,6 +51,8 @@ class XGridPainter extends CustomPainter {
       style: style,
       msPerPx: msPerPx,
       xAxisLabelFormatter: xAxisLabelFormatter,
+      showGridLines: showGridLines,
+      showLabels: showLabels,
     );
   }
 
@@ -51,7 +61,9 @@ class XGridPainter extends CustomPainter {
       timestamps != oldDelegate.timestamps ||
       xCoords != oldDelegate.xCoords ||
       style != oldDelegate.style ||
-      xAxisLabelFormatter != oldDelegate.xAxisLabelFormatter;
+      xAxisLabelFormatter != oldDelegate.xAxisLabelFormatter ||
+      showGridLines != oldDelegate.showGridLines ||
+      showLabels != oldDelegate.showLabels;
 
   @override
   bool shouldRebuildSemantics(XGridPainter oldDelegate) => false;
