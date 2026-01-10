@@ -369,7 +369,7 @@ class BasicChartState<T extends BasicChart> extends State<T>
               if (context.read<ChartConfig>().chartAxisConfig.showQuoteGrid)
                 _buildQuoteGridLine(gridLineQuotes),
               _buildChartData(),
-              if (context.read<ChartConfig>().chartAxisConfig.showQuoteGrid)
+              if (context.read<ChartConfig>().chartAxisConfig.showQuoteGridLabels)
                 _buildQuoteGridLabel(gridLineQuotes),
             ],
           );

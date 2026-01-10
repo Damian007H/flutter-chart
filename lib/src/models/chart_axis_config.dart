@@ -21,6 +21,8 @@ class ChartAxisConfig {
     this.defaultIntervalWidth = 20,
     this.showQuoteGrid = true,
     this.showEpochGrid = true,
+    this.showQuoteGridLabels = true,
+    this.showEpochGridLabels = true,
     this.showFrame = false,
     this.smoothScrolling = true,
     this.yAxisLabelPosition = YAxisLabelPosition.right,
@@ -47,6 +49,12 @@ class ChartAxisConfig {
 
   /// Show Epoch Grid lines and labels.
   final bool showEpochGrid;
+
+  /// Show Quote Grid labels.
+  final bool showQuoteGridLabels;
+
+  /// Show Epoch Grid labels.
+  final bool showEpochGridLabels;
 
   /// Show the chart frame and indicators dividers.
   ///
@@ -106,6 +114,10 @@ class ChartAxisConfig {
     String Function(DateTime time)? xAxisLabelFormatter,
     int? xAxisGridLineCount,
     int? yAxisGridLineCount,
+    bool? showQuoteGrid,
+    bool? showQuoteGridLabels,
+    bool? showEpochGrid,
+    bool? showEpochGridLabels,
     bool? enableScaleGesture,
   }) =>
       ChartAxisConfig(
@@ -113,6 +125,12 @@ class ChartAxisConfig {
         initialBottomBoundQuote:
             initialBottomBoundQuote ?? this.initialBottomBoundQuote,
         maxCurrentTickOffset: maxCurrentTickOffset ?? this.maxCurrentTickOffset,
+        showQuoteGrid: showQuoteGrid ?? this.showQuoteGrid,
+        showQuoteGridLabels:
+            showQuoteGridLabels ?? this.showQuoteGridLabels,
+        showEpochGrid: showEpochGrid ?? this.showEpochGrid,
+        showEpochGridLabels:
+            showEpochGridLabels ?? this.showEpochGridLabels,
         yAxisLabelPosition: yAxisLabelPosition ?? this.yAxisLabelPosition,
         yAxisLabelsOverlay: yAxisLabelsOverlay ?? this.yAxisLabelsOverlay,
         yAxisLabelFormatter: yAxisLabelFormatter ?? this.yAxisLabelFormatter,

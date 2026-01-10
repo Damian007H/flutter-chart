@@ -31,11 +31,7 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
           ? labelFormatter!(quote, pipSize)
           : quote.toStringAsFixed(pipSize);
       final TextPainter painter = makeTextPainter(label, textStyle);
-      final double halfHeight = painter.height / 2;
-      final double y = quoteToCanvasY(quote).clamp(
-        halfHeight,
-        size.height - halfHeight,
-      );
+      final y = (quoteToCanvasY(quote) - painter.height).clamp(0.0, size.height - painter.height);
 
       paintWithTextPainter(
         canvas,
@@ -44,8 +40,8 @@ class YGridLabelPainterWeb extends YGridLabelPainter {
             ? Offset(style.labelHorizontalPadding, y)
             : Offset(size.width - style.labelHorizontalPadding, y),
         anchorAlignment: labelPosition == YAxisLabelPosition.left
-            ? Alignment.centerLeft
-            : Alignment.centerRight,
+            ? Alignment.topLeft
+            : Alignment.topRight,
       );
     }
   }

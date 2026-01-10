@@ -194,7 +194,7 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                if (context.read<ChartConfig>().chartAxisConfig.showEpochGrid)
+                if (context.read<ChartConfig>().chartAxisConfig.showEpochGrid || context.read<ChartConfig>().chartAxisConfig.showEpochGridLabels)
                   RepaintBoundary(
                     child: CustomPaint(
                       painter: XGridPainter(
@@ -209,6 +209,8 @@ class XAxisState extends State<XAxisBase> with TickerProviderStateMixin {
                         style: _chartTheme,
                         msPerPx: _model.msPerPx,
                         xAxisLabelFormatter: axisConfig.xAxisLabelFormatter,
+                        showGridLines: axisConfig.showEpochGrid,
+                        showLabels: axisConfig.showEpochGridLabels,
                       ),
                     ),
                   ),
