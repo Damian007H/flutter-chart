@@ -305,8 +305,13 @@ class BasicChartState<T extends BasicChart> extends State<T>
     // If the minQuote and maxQuote are the same there should be a default state
     // to show chart quotes.
     if (minQuote == maxQuote) {
-      minQuote -= 2;
-      maxQuote += 2;
+      final double baseline = minQuote.abs();
+      final double delta = (baseline * 0.02).clamp(1e-6, double.infinity);
+      minQuote -= delta;
+      maxQuote += delta;
+      if (minMaxValues[0] >= 0 && minQuote < 0) {
+        minQuote = 0;
+      }
     }
 
     if (!minQuote.isNaN && minQuote != bottomBoundQuoteTarget) {
