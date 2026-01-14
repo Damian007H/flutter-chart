@@ -159,6 +159,7 @@ class XAxisModel extends ChangeNotifier {
   double? _prevScrollAnimationValue;
   bool _autoPanEnabled = true;
   late bool _dataFitMode;
+  bool _dataFitApplied = false;
   double _msPerPx = 1000;
   double? _prevMsPerPx;
   late int _granularity;
@@ -261,7 +262,12 @@ class XAxisModel extends ChangeNotifier {
         _scrollTo(_rightBoundEpoch + elapsedMs);
         break;
       case ViewingMode.fitData:
-        fitAvailableData();
+        if (!_dataFitApplied) {
+          fitAvailableData();
+          _dataFitApplied = true;
+        } else {
+          disableDataFit();
+        }
         break;
       case ViewingMode.constantScrollSpeed:
         scrollBy(_panSpeed * elapsedMs);
@@ -380,8 +386,10 @@ class XAxisModel extends ChangeNotifier {
   /// Enables data fit viewing mode.
   void enableDataFit() {
     _dataFitMode = true;
+    _dataFitApplied = false;
     if (kIsWeb) {
       fitAvailableData();
+      _dataFitApplied = true;
     }
 
     notifyListeners();
@@ -390,6 +398,7 @@ class XAxisModel extends ChangeNotifier {
   /// Disables data fit viewing mode.
   void disableDataFit() {
     _dataFitMode = false;
+    _dataFitApplied = false;
     notifyListeners();
   }
 
